@@ -13,8 +13,8 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install ChromeDriver 131.0.6778.204
-RUN wget -q "https://chromedriver.storage.googleapis.com/131.0.6778.204/chromedriver_linux64.zip" \
+# Install ChromeDriver (using a more stable version)
+RUN wget -q "https://chromedriver.storage.googleapis.com/120.0.6099.109/chromedriver_linux64.zip" \
     && unzip chromedriver_linux64.zip \
     && mv chromedriver /usr/local/bin/ \
     && chmod +x /usr/local/bin/chromedriver \
@@ -34,7 +34,7 @@ COPY . .
 ENV PYTHONUNBUFFERED=1
 ENV DISPLAY=:99
 
-# Expose port (Railway will set this automatically)
+# Expose port
 ENV PORT=5000
 EXPOSE $PORT
 
