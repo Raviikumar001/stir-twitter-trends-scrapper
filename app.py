@@ -36,7 +36,7 @@ if __name__ == '__main__':
     Starting X Scraper Application
     ===================================
     Time (UTC): {datetime.now(timezone.utc)}
-    Username: {os.getenv('X_USERNAME')}
+    Username: {os.getenv('PORT')}
     """)
-    
-    app.run(debug=True, host='127.0.0.1', port=5000)
+    port = int(os.getenv('PORT', 5000))
+    app.run(debug=True, host='127.0.0.1', port=port)
