@@ -77,37 +77,38 @@ class XScraper:
 
 
 
+ 
+
     def login_to_x(self, driver):
         """Handle the X (Twitter) login process"""
         try:
             print(f"Starting login process at {datetime.now(timezone.utc)}")
             driver.get("https://x.com/login")
-            time.sleep(3)
+            time.sleep(4)  # Wait for page load
 
-            # Enter username
+            # Enter username and press Enter
             print("Locating username field...")
             username_field = driver.find_element(By.XPATH, "//input[@name='text']")
             print(f"Entering username: {self.x_username}")
             username_field.send_keys(self.x_username)
-            
-            # Click Next
-            print("Clicking Next button...")
-            next_button = driver.find_element(By.XPATH, "//span[contains(text(),'Next')]")
-            next_button.click()
-            time.sleep(3)
+            username_field.send_keys(Keys.RETURN)
+            time.sleep(4)  # Wait for email field
 
-            # Enter password
+            # Enter email and press Enter
+            print("Entering email...")
+            email_field = driver.find_element(By.CSS_SELECTOR, 'input[data-testid="ocfEnterTextTextInput"]')
+            email_field.send_keys(os.getenv('USER_EMAIL'))
+            email_field.send_keys(Keys.RETURN)
+            time.sleep(4)  # Wait for password field
+
+            # Enter password and press Enter
             print("Entering password...")
             password_field = driver.find_element(By.XPATH, "//input[@name='password']")
             password_field.send_keys(self.x_password)
-            
-            # Click Login
-            print("Clicking Login button...")
-            login_button = driver.find_element(By.XPATH, "//span[contains(text(),'Log in')]")
-            login_button.click()
-            time.sleep(5)
+            password_field.send_keys(Keys.RETURN)
+            time.sleep(5)  # Wait for login to complete
 
-            # Verify login success
+            # Verify login success by checking for home feed
             try:
                 WebDriverWait(driver, 10).until(
                     EC.presence_of_element_located((By.XPATH, "//span[contains(text(),'Home')]"))
@@ -123,7 +124,7 @@ class XScraper:
             print(f"Error during login: {str(e)}")
             self.take_screenshot(driver, 'login_error.png')
             return False
-
+        
     def take_screenshot(self, driver, filename):
         """Save screenshot for debugging"""
         try:
