@@ -23,41 +23,54 @@ class XScraper:
         self.x_username = os.getenv('X_USERNAME')
         self.x_password = os.getenv('X_PASSWORD')
         
-        # ProxyMesh Configuration
-        self.proxymesh_username = os.getenv('PROXYMESH_USERNAME')
-        self.proxymesh_password = os.getenv('PROXYMESH_PASSWORD')
-        self.proxy_server = 'us-ca.proxymesh.com:31280'
+        # # ProxyMesh Configuration
+        # self.proxymesh_username = os.getenv('PROXYMESH_USERNAME')
+        # self.proxymesh_password = os.getenv('PROXYMESH_PASSWORD')
+        # self.proxy_server = 'us-ca.proxymesh.com:31280'
         
         print(f"\nCurrent Date and Time (UTC): {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"Current User's Login: {self.x_username}")
 
     def setup_driver(self):
-        try:
-            chrome_options = Options()
-            chrome_options.add_argument('--no-sandbox')
-            chrome_options.add_argument('--disable-dev-shm-usage')
-            chrome_options.add_argument('--headless')
-            chrome_options.add_argument('--disable-gpu')
-            chrome_options.add_argument('--window-size=1920,1080')
-            chrome_options.add_argument('--start-maximized')
-            
-            # Add proxy configuration
-            proxy_auth = f"{self.proxymesh_username}:{self.proxymesh_password}"
-            chrome_options.add_argument(f'--proxy-server=http://{self.proxy_server}')
-            
-            # Add anti-detection measures
-            chrome_options.add_argument('--disable-blink-features=AutomationControlled')
-            chrome_options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.109 Safari/537.36')
-            chrome_options.add_experimental_option('excludeSwitches', ['enable-automation'])
-            chrome_options.add_experimental_option('useAutomationExtension', False)
-            
-            service = Service('/usr/local/bin/chromedriver')
-            driver = webdriver.Chrome(service=service, options=chrome_options)
-            
-            return driver
-        except Exception as e:
-            print(f"Error in setup_driver: {str(e)}")
-            raise
+        """Initialize the Chrome driver if it hasn't been created yet"""
+        if self.driver is None:
+            try:
+                chrome_options = Options()
+                chrome_options.add_argument('--no-sandbox')
+                chrome_options.add_argument('--disable-dev-shm-usage')
+                chrome_options.add_argument('--headless')
+                chrome_options.add_argument('--disable-gpu')
+                chrome_options.add_argument('--window-size=1920,1080')
+                chrome_options.add_argument('--start-maximized')
+                
+                # Add proxy configuration
+                # proxy_auth = f"{self.proxymesh_username}:{self.proxymesh_password}"
+                chrome_options.add_argument(f'--proxy-server=http://{self.proxy_server}')
+                
+                # Add anti-detection measures
+                chrome_options.add_argument('--disable-blink-features=AutomationControlled')
+                chrome_options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6167.85 Safari/537.36')
+                chrome_options.add_experimental_option('excludeSwitches', ['enable-automation'])
+                chrome_options.add_experimental_option('useAutomationExtension', False)
+                
+                # Point to the Chrome binary in Docker
+                chrome_options.binary_location = '/usr/local/bin/chrome'
+                
+                service = Service('/usr/local/bin/chromedriver')
+                self.driver = webdriver.Chrome(service=service, options=chrome_options)
+                
+                # Execute CDP commands to make detection harder
+                self.driver.execute_cdp_cmd('Network.setUserAgentOverride', {
+                    "userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6167.85 Safari/537.36'
+                })
+                self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+                
+                return self.driver
+            except Exception as e:
+                print(f"Error in setup_driver: {str(e)}")
+                raise
+        return self.driver
+
 
     # Rest of your code remains exactly the same
     def login_to_x(self, driver):
