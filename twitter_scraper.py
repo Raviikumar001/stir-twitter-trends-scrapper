@@ -37,9 +37,10 @@ class XScraper:
             chrome_options.add_argument('--no-sandbox')
             chrome_options.add_argument('--disable-dev-shm-usage')
             chrome_options.add_argument('--headless')
-            chrome_options.add_argument('--disable-gpu')  # Add this line
+            chrome_options.add_argument('--disable-gpu')
             chrome_options.add_argument('--window-size=1920,1080')
             chrome_options.add_argument('--start-maximized')
+            chrome_options.binary_location = '/usr/bin/google-chrome'
             
             # Add proxy configuration
             proxy_auth = f"{self.proxymesh_username}:{self.proxymesh_password}"
@@ -47,12 +48,12 @@ class XScraper:
             
             # Add anti-detection measures
             chrome_options.add_argument('--disable-blink-features=AutomationControlled')
-            chrome_options.add_argument(f'--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
+            chrome_options.add_argument(f'--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36')
             chrome_options.add_experimental_option('excludeSwitches', ['enable-automation'])
             chrome_options.add_experimental_option('useAutomationExtension', False)
             
             # Initialize the driver with specific ChromeDriver path
-            service = Service('/usr/local/bin/chromedriver')  # Update this line
+            service = Service('/usr/local/bin/chromedriver')
             driver = webdriver.Chrome(service=service, options=chrome_options)
             
             # Add proxy authentication
