@@ -13,7 +13,10 @@ scraper = XScraper()
 
 @app.route('/')
 def index():
-    return render_template('index.html', username=os.getenv('X_USERNAME'))
+    try:
+        return render_template('index.html', username=os.getenv('X_USERNAME'))
+    except Exception as e:
+        return f"Error loading template: {str(e)}", 500
 
 @app.route('/test_login')
 def test_login():
