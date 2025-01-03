@@ -6,7 +6,9 @@ import os
 from dotenv import load_dotenv
 
 # Initialize Flask app
-app = Flask(__name__)
+app = Flask(__name__, 
+           template_folder='templates',  # Explicitly tell Flask where to find templates
+           static_folder='static')       # Explicitly tell Flask where to find static files
 
 # Initialize scraper
 scraper = XScraper()
@@ -39,7 +41,9 @@ if __name__ == '__main__':
     Starting X Scraper Application
     ===================================
     Time (UTC): {datetime.now(timezone.utc)}
-    Username: {os.getenv('PORT')}
+    Username: {os.getenv('X_USERNAME')}
     """)
+    
     port = int(os.getenv('PORT', 5000))
-    app.run(debug=True, host='127.0.0.1', port=port)
+    # Change host to '0.0.0.0' for production deployment
+    app.run(debug=False, host='0.0.0.0', port=port)
