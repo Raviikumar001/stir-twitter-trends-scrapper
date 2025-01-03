@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>X Trends Scraper</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>X Trends Scraper</h1>
+        <p class="timestamp">
+          Server Time (UTC): <span id="serverTime"></span>
+        </p>
+      </header>
+
+      <main>
+        <section class="control-panel">
+          <h2>Control Panel</h2>
+          <div class="button-group">
+            <button onclick="testLogin()" class="btn primary">
+              Test Login
+            </button>
+            <button onclick="getTrends()" class="btn secondary" disabled>
+              Get Trends
+            </button>
+          </div>
+        </section>
+
+        <section class="status-panel">
+          <h2>Status</h2>
+          <div id="status" class="status-display">Ready to start...</div>
+        </section>
+
+        <section class="results-panel">
+          <h2>Results</h2>
+          <div id="result" class="result-display"></div>
+        </section>
+      </main>
+
+      <footer>
+        <p>Current User: <span id="currentUser">{{ username }}</span></p>
+      </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
